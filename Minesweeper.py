@@ -109,7 +109,7 @@ def calcMines():            # Count the number of neighboring mines to a cell
 def main():                 # Driver Code
     global over
     win = pygame.display.set_mode((screenSize, screenSize))
-    pygame.display.set_caption("MineSweeper")
+    pygame.display.set_caption("Minesweeper")
     loop = True
     createGrid()
     plantMines()
