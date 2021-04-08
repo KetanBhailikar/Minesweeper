@@ -2,11 +2,12 @@ import random
 import pygame
 pygame.init()
 
-screenSize = 800       # Size of the Window
-cellSize = 40          # Size of individual Cell
-mines = 80             # Number of Mines in the Game
+screenSize = 400       # Size of the Window
+cellSize = 20          # Size of individual Cell
+mines = 50             # Number of Mines in the Game
 grid = []              # A 2D Array to Store all the Cells
 over = False           # Is the Game Over
+firstclick = True      # Did the user click more than once
 
 
 class Cell():
@@ -25,7 +26,7 @@ class Cell():
         if self.revealed:
             pygame.draw.rect(win, (200, 200, 200), pygame.Rect(
                 self.x, self.y, cellSize-2, cellSize-2))
-            font = pygame.font.Font('freesansbold.ttf', 15)
+            font = pygame.font.Font('freesansbold.ttf', cellSize//2)
             text = font.render(str(self.nmines), True,
                                (0, 0, 0), (200, 200, 200))
             textRect = text.get_rect()
@@ -79,11 +80,12 @@ def createGrid():           # Create the grid of Cells
         grid.append(row)
 
 
-def plantMines():           # Plant the mines randomly
+def plantMines(a,b):           # Plant the mines randomly
     global mines
     if mines > (screenSize//cellSize)**2:
         mines = (screenSize//cellSize)**2
     done = []
+    done.append([a,b])
     for i in range(mines):
         x = random.randint(0, (screenSize//cellSize)-1)
         y = random.randint(0, (screenSize//cellSize)-1)
@@ -107,13 +109,11 @@ def calcMines():            # Count the number of neighboring mines to a cell
 
 
 def main():                 # Driver Code
-    global over
+    global over, firstclick
     win = pygame.display.set_mode((screenSize, screenSize))
     pygame.display.set_caption("Minesweeper")
     loop = True
     createGrid()
-    plantMines()
-    calcMines()
     # Game Loop
     while loop:
         for i in range(screenSize//cellSize):
@@ -130,6 +130,10 @@ def main():                 # Driver Code
                 x, y = pygame.mouse.get_pos()
                 x = x//(screenSize//(screenSize//cellSize))
                 y = y//(screenSize//(screenSize//cellSize))
+                if firstclick:
+                        plantMines(x,y)
+                        calcMines()
+                        firstclick = False
                 grid[x][y].reveal()
         pygame.display.flip()
 
